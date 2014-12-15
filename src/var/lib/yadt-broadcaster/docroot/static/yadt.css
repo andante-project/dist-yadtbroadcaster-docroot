@@ -11,6 +11,10 @@ p {
   margin: 8px 0;
 }
 
+.fa-exclamation-triangle, .fa-check-circle {
+  padding-right: 1em;
+}
+
 .fa-exclamation-triangle { color: red; }
 
 .fa-check-circle { color: green; }
