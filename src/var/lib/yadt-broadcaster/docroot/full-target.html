@@ -4,56 +4,77 @@
     <link type="text/css" rel="stylesheet" href="/static/yadt.css"></link>
     <script src="/static/jquery.min.js"></script>
     <script src="/static/d3.min.js"></script>
-    <script>
-      $.extend({
-          getUrlVars: function(){
-              var vars = [], hash;
-              var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-              for(var i = 0; i < hashes.length; i++) {
-                  hash = hashes[i].split('=');
-                  vars.push(hash[0]);
-                  vars[hash[0]] = hash[1];
-              }
-              return vars;
-          },
-          getUrlVar: function(name){
-              return $.getUrlVars()[name];
-          }
-      });
-    </script>
+    <script src="/static/yadt.js"></script>
   </head>
   <body>
-  <h1>Target <span class="targetname"></span></h1>
-  <div id="hosts">
-  </div>
+    <h1>Target <span class="targetname"></span></h1>
+
+    <div id="hosts"></div>
+
+    <div id="overlay">
+      <div id="countdown">
+        <h3>No Connection!</h3>
+        Retrying...
+      </div>
+    </div>
 
     <script>
+      var MIN_RELOAD_INTERVAL = 10000;
+
       var target = $.getUrlVar('target');
-      var url = "/api/v1/targets/" + target + "/full";
+      var reload_interval = $.getUrlVar('reload_interval');
+
       d3.select(".targetname").text(target);
 
-      var model = [];
-      $.ajax({url: url,
-        type: "GET",
-        contentType: 'text/plain'
-      })
-        .done(function(data, status){
-            console.log(data);
-            model = JSON.parse(data);
-            var hosts = d3.select("#hosts").selectAll("div").data(model);
-            hosts.enter()
-              .append("div")
-              .append("h2")
-              .text(function(d){return d.host;});
-            var services = hosts.selectAll("p").data(function(d){return d.services;});
-            var ps = services.enter().append("p");
-            ps.append("i").attr("class", function(d){return d.state == "up" ? "fa fa-check-circle" : "fa fa-exclamation-triangle";});
-            ps.append("span").text(function(d){return d.name;});
-        })
-        .fail(function(xhr, status){
-            console.log(xhr);
-            console.log(status);
-        });
+      function create_renderer(url) {
+        return function() {
+          $.ajax({url: url,
+            type: "GET",
+            contentType: 'text/plain'
+          })
+          .done(function(data, status){
+              d3.select("#overlay").style("display", "none");
+              var model = JSON.parse(data);
+              var hosts = d3.select("#hosts").selectAll("div").data(model);
+              hosts.enter()
+                .append("div")
+                .attr("class", "host")
+                .append("h2")
+                .text(function(d){return d.host;});
+              var services = hosts.selectAll("p").data(function(d){return d.services;});
+              var ps = services.enter().append("p");
+              ps.append("i").attr("class", function(d){return d.state == "up" ? "fa fa-check-circle" : "fa fa-exclamation-triangle";});
+              ps.append("span").text(function(d){return d.name;});
+          })
+          .fail(function(xhr, status){
+              console.log(xhr);
+              console.log(status);
+              d3.select("#overlay").style("display", "block");
+          });
+        }
+      }
+
+      var timerId = undefined;
+      function startTimer(fun, interval) {
+        if (timerId) {
+          return;
+        }
+        if (typeof interval !== 'undefined') {
+          if (interval < MIN_RELOAD_INTERVAL) {
+            console.log("reload interval of " + interval + " is too small, setting it to " + MIN_RELOAD_INTERVAL);
+            interval = MIN_RELOAD_INTERVAL;
+          }
+          timerId = setInterval(fun, interval);
+        }
+      }
+
+      function reload() {
+        location.reload();
+      }
+
+      create_renderer("/api/v1/targets/" + target + "/full")();
+      startTimer(reload, reload_interval);
+
     </script>
   </body>
 </html>
