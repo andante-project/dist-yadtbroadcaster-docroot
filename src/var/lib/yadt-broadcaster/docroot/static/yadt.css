@@ -56,3 +56,7 @@ div.host {
   text-shadow: 1px 3px #000;
   text-align: left;
 }
+
+h2 {
+  padding-top: 1em;
+}
