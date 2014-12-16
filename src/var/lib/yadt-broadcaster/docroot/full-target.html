@@ -18,7 +18,7 @@
     </div>
 
     <script>
-      var MIN_RELOAD_INTERVAL = 10000;
+      var MIN_RELOAD_INTERVAL = 10;
 
       var target = $.getUrlVar('target');
       var reload_interval = $.getUrlVar('reload_interval');
@@ -63,7 +63,7 @@
             console.log("reload interval of " + interval + " is too small, setting it to " + MIN_RELOAD_INTERVAL);
             interval = MIN_RELOAD_INTERVAL;
           }
-          timerId = setInterval(fun, interval);
+          timerId = setInterval(fun, 1000 * interval);
         }
       }
 
