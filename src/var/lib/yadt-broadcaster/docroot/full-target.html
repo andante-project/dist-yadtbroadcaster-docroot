@@ -13,7 +13,7 @@
 
     <div id="overlay">
       <div id="countdown">
-        <h3>No Connection or unknown Target "<span class="targetname"></span>"!</h3>
+        <h3>Unknown Target "<span class="targetname"></span>"!</h3>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
       var target = $.getUrlVar('target');
       var reload_interval = $.getUrlVar('reload_interval');
 
-      d3.select(".targetname").text(target);
+      d3.selectAll(".targetname").text(target);
 
       function create_renderer(url) {
         return function() {
@@ -55,7 +55,7 @@
 
       var timerId = undefined;
       function startTimer(fun, interval) {
-        if (timerId) {
+        if (typeof timerId !== 'undefined') {
           return;
         }
         if (typeof interval !== 'undefined') {
@@ -71,8 +71,8 @@
         location.reload();
       }
 
-      create_renderer("/api/v1/targets/" + target + "/full")();
       startTimer(reload, reload_interval);
+      create_renderer("/api/v1/targets/" + target + "/full")();
 
     </script>
   </body>
