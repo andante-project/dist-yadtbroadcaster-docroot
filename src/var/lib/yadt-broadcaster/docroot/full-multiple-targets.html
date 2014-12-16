@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/font-awesome-4.2.0/css/font-awesome.css"></link>
+    <link type="text/css" rel="stylesheet" href="/static/yadt.css"></link>
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/d3.min.js"></script>
+    <script src="/static/yadt.js"></script>
+  </head>
+  <body>
+    <div id="targets"></div>
+
+    <script>
+      var targets = $.getUrlVar('targets');
+
+      if (typeof targets === 'undefined') {
+        console.log("no 'targets' specified?!");
+      }
+
+      var target_list = targets.split(",");
+      var model = {};
+      target_list.forEach(function(target) {
+        console.log("target " + target);
+        var url = "/api/v1/targets/" + target + "/full";
+        $.ajax({url: url,
+          type: "GET",
+          contentType: 'text/plain'
+        })
+        .done(function(data, status){
+          model[target] = JSON.parse(data);
+          update();
+        })
+        .fail(function(xhr, status){
+          console.log("xhr: " + xhr);
+          model[target] = "unknown";
+          update();
+        });
+      });
+
+      function update() {
+        var completed = true;
+        target_list.forEach(function(target) {
+          var result = (model[target] ? "found" : "pending");
+          console.log("target " + target + ": " + result);
+          if (typeof result === 'undefined') {
+            completed = false;
+          }
+        });
+        if (completed) {
+          console.log("rendering");
+          console.log(model);
+          var targets = d3.select("#targets").selectAll("div").data(target_list);
+          targets.enter()
+            .append("div")
+            .append("h2")
+            .text(function(d) {return d;});
+          var hosts = targets.selectAll("div").data(function(d) {return model[d];});
+          var host = hosts.enter()
+            .append("div");
+            //.text(function(d){console.log(d); return d.host;});
+          var services = host.selectAll("span").data(function(d){return d.services;});
+          services.enter()
+            .append("span")
+            .style("display", "inline-block")
+            .style("float", "left")
+            .style("width", "10px")
+            .style("height", function(d){return d.state == "up" ? "20px" : "40px";})
+            .style("margin", function(d){return d.state == "up" ? "10px 0" : "0";})
+            .style("background-color", function(d){return d.state == "up" ? "green" : "red";});
+        }
+      }
+
+    </script>
+  </body>
+</html>
