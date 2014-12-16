@@ -1,5 +1,32 @@
 <html>
-<body>
-  <a href="/full-target.html?target=">/full-target.html?target=</a>
-</body>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/font-awesome-4.2.0/css/font-awesome.css"></link>
+    <link type="text/css" rel="stylesheet" href="/static/yadt.css"></link>
+  </head>
+  <body>
+    <h1>YadtBroadCaster, distributed</h1>
+
+    <h2>Single Target View</h2>
+
+    <h3>HTML/CSS</h3>
+    <a href="/full-target.html?target=">/full-target.html?target=[TARGET]&reload_interval=[SECONDS]</a>
+    <dl>
+      <dt>target</dt>
+      <dd>which target to display</dd>
+      <dt>reload_interval</dt>
+      <dd>reload whole page after specified seconds (default: 0, no reload);
+          minimum is 10 seconds</dd>
+    </dl>
+    Example: <a href="/full-target.html?target=devytc&reload_interval=60">/full-target.html?target=devytc&reload_interval=60</a>
+
+    <h3>Rest API</h3>
+    <a href="/api/v1/targets/[TARGET]/full">/api/v1/targets/[TARGET]/full</a>
+    <br/>
+    Example: <a href="/api/v1/targets/devytc/full">/api/v1/targets/devytc/full</a><br/>
+
+    <h2>Multiple Targets View</h2>
+
+    <a href="/full-multiple-targets.html?target=foo">fmt</a>
+
+  </body>
 </html>
