@@ -8,7 +8,7 @@
     <script src="/static/yadt.js"></script>
   </head>
   <body>
-    <div id="targets"></div>
+    <table style="table-layout: fixed;" id="targets"></table>
 
     <script>
       var targets = $.getUrlVar('targets');
@@ -21,13 +21,17 @@
       var model = {};
       target_list.forEach(function(target) {
         console.log("target " + target);
+        model[target] = [];
         var url = "/api/v1/targets/" + target + "/full";
         $.ajax({url: url,
           type: "GET",
           contentType: 'text/plain'
         })
         .done(function(data, status){
-          model[target] = JSON.parse(data);
+          var targetHosts = JSON.parse(data);
+          targetHosts.forEach(function(host){
+            model[target] = model[target].concat(host["services"]);
+          });
           update();
         })
         .fail(function(xhr, status){
@@ -49,23 +53,18 @@
         if (completed) {
           console.log("rendering");
           console.log(model);
-          var targets = d3.select("#targets").selectAll("div").data(target_list);
+          var targets = d3.select("#targets").selectAll("tr").data(target_list);
           targets.enter()
-            .append("div")
+            .append("tr")
             .attr("class", "target")
-            .append("h2")
+            .append("th")
             .text(function(d) {return d;});
-          var hosts = targets.selectAll("div").data(function(d) {return model[d];});
-          var host = hosts.enter()
-            .append("div")
-            .attr("class", "services");
-            //.text(function(d){console.log(d); return d.host;});
-          var services = host.selectAll("span").data(function(d){return d.services;});
+
+          var services = targets.append("td").selectAll("span").data(function(d){return model[d];});
           services.enter()
             .append("span")
-            .style("display", "inline-block")
-            .style("float", "left")
-            .style("width", "10px")
+            .attr("class", "service")
+            .attr("title", function(d){return d.name;})
             .style("height", function(d){return d.state == "up" ? "20px" : "40px";})
             .style("margin", function(d){return d.state == "up" ? "10px 0" : "0";})
             .style("background-color", function(d){return d.state == "up" ? "green" : "red";});

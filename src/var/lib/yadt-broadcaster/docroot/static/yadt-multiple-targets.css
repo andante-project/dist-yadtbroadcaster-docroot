@@ -2,11 +2,7 @@ body {
   background-color: #333;
   color: #ddd;
   font-weight: bold;
-}
-
-.services span {
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
+  padding: 4px;
 }
 
 h2 {
@@ -16,5 +12,17 @@ h2 {
 }
 .target {
   clear: both;
-  padding-top: 1em;
+  padding-top: 20px;
+}
+
+td {
+  padding: 0;
+}
+
+.service {
+  display: inline-block;
+  float: left;
+  width: 10px;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
 }
