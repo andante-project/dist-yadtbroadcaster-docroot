@@ -18,11 +18,21 @@ div.host {
 
 .fa-exclamation-triangle, .fa-check-circle {
   padding-right: 1ex;
+  color: white;
 }
 
-.fa-exclamation-triangle { color: red; }
-
-.fa-check-circle { color: green; }
+.service {
+  color: white;
+  padding: 1ex;
+  margin: 1px 0 0;
+}
+.service.up {
+  background-color: green;
+}
+.service.not-up {
+  background-color: red;
+  font-weight: bold;
+}
 
 #overlay {
   position: fixed;

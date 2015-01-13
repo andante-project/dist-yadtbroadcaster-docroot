@@ -42,7 +42,8 @@
                 .text(function(d){return d.host;});
               var services = hosts.selectAll("p").data(function(d){return d.services;});
               var ps = services.enter().append("p");
-              ps.append("i").attr("class", function(d){return d.state == "up" ? "fa fa-check-circle" : "fa fa-exclamation-triangle";});
+              ps.attr("class", function(d){return get_if_up_or_else(d, "service up", "service not-up");});
+              ps.append("i").attr("class", function(d){return get_if_up_or_else(d, "fa fa-check-circle", "fa fa-exclamation-triangle");});
               ps.append("span").text(function(d){return d.name;});
           })
           .fail(function(xhr, status){
@@ -50,6 +51,21 @@
               console.log(status);
               d3.select("#overlay").style("display", "block");
           });
+        }
+      }
+
+      function is_up(service) {
+        return service.state == "up";
+      }
+
+      function get_if_up_or_else(service, up, down) {
+        console.log(service);
+        console.log(up);
+        console.log(down);
+        if (is_up(service)) {
+          return up;
+        } else {
+          return down;
         }
       }
 
