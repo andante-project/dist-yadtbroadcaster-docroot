@@ -20,8 +20,8 @@
       var target_list = targets.split(",");
       var model = {};
       target_list.forEach(function(target) {
-        console.log("target " + target);
-        model[target] = [];
+        console.log("querying target " + target);
+        model[target] = undefined;
         var url = "/api/v1/targets/" + target + "/full";
         $.ajax({url: url,
           type: "GET",
@@ -30,6 +30,12 @@
         .done(function(data, status){
           var targetHosts = JSON.parse(data);
           targetHosts.forEach(function(host){
+            host.services.forEach(function(service){
+              service.hostname = host.host;
+            });
+            if (typeof model[target] === "undefined") {
+              model[target] = [];
+            }
             model[target] = model[target].concat(host["services"]);
           });
           update();
@@ -44,9 +50,10 @@
       function update() {
         var completed = true;
         target_list.forEach(function(target) {
-          var result = (model[target] ? "found" : "pending");
-          console.log("target " + target + ": " + result);
-          if (typeof result === 'undefined') {
+          if (model[target]) {
+            console.log("target " + target + " received");
+          } else {
+            console.log("target " + target + " still pending");
             completed = false;
           }
         });
@@ -60,11 +67,11 @@
             .append("th")
             .text(function(d) {return d;});
 
-          var services = targets.append("td").selectAll("span").data(function(d){return model[d];});
+          var services = targets.append("td").selectAll("span").data(function(d){return model[d];}, function(d){return d.hostname + " " + d.name;});
           services.enter()
             .append("span")
             .attr("class", "service")
-            .attr("title", function(d){return d.name;})
+            .attr("title", function(d){return d.hostname + "\n" + d.name;})
             .style("height", function(d){return d.state == "up" ? "20px" : "40px";})
             .style("margin", function(d){return d.state == "up" ? "10px 0" : "0";})
             .style("background-color", function(d){return d.state == "up" ? "green" : "red";});
