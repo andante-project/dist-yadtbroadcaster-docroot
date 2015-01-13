@@ -14,6 +14,7 @@ p {
 div.host {
   float: left;
   padding-right: 1em;
+  margin-bottom: 1ex;
 }
 
 .fa-exclamation-triangle, .fa-check-circle {
@@ -30,7 +31,13 @@ div.host {
   background-color: green;
 }
 .service.not-up {
-  background-color: red;
+  background: repeating-linear-gradient(
+    45deg,
+    red,
+    red 10px,
+    #a00 10px,
+    #a00 20px
+  );
   font-weight: bold;
 }
 
@@ -67,6 +74,6 @@ div.host {
   text-align: left;
 }
 
-h2 {
-  padding-top: 1em;
+h1 {
+  margin-bottom: 0;
 }
