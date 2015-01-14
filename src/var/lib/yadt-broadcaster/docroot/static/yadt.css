@@ -77,3 +77,13 @@ div.host {
 h1 {
   margin-bottom: 0;
 }
+
+th {
+  vertical-align: top;
+  text-align: right;
+  padding-top: 10px;
+}
+
+table {
+  border-spacing: 10px 20px;
+}
