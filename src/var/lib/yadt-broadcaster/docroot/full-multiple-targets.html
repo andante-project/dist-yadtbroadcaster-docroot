@@ -58,8 +58,7 @@
           }
         });
         if (completed) {
-          console.log("rendering");
-          console.log(model);
+          console.log("rendering targets");
           var targets = d3.select("#targets").selectAll("tr").data(target_list);
           targets.enter()
             .append("tr")
