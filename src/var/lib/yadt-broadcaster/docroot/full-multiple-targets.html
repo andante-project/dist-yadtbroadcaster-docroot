@@ -71,8 +71,8 @@
             .append("span")
             .attr("class", "service")
             .attr("title", function(d){return d.hostname + "\n" + d.name;})
-            .style("height", function(d){return d.state == "up" ? "20px" : "40px";})
-            .style("margin", function(d){return d.state == "up" ? "10px 0" : "0";})
+            .style("height", function(d){return d.state == "up" ? "10px" : "20px";})
+            .style("margin", function(d){return d.state == "up" ? "5px 0" : "0";})
             .style("background-color", function(d){return d.state == "up" ? "green" : "red";});
         }
       }
